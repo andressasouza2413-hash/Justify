@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Configurações | Justify</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{--primary:#4f46e5;--primary-dark:#4338ca;--primary-soft:#eef2ff;--accent:#06b6d4;--bg:#f8fafc;--text:#0f172a;--muted:#64748b;--card:#fff;--border:#e2e8f0;--danger:#dc2626;--success:#16a34a;--shadow:0 8px 24px -14px rgba(15,23,42,.25)}
+  [data-theme="escuro"]{--bg:#0b1120;--text:#e2e8f0;--muted:#94a3b8;--card:#111c33;--border:#1e293b;--primary-soft:#1e1b4b}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text)}
+  a{color:inherit;text-decoration:none}
+  .topbar{background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:30}
+  .topbar-in{max-width:960px;margin:0 auto;padding:0 22px;height:66px;display:flex;align-items:center;justify-content:space-between}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px}
+  .brand .dot{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--primary),var(--accent));display:grid;place-items:center;color:#fff}
+  .container{max-width:960px;margin:0 auto;padding:26px 22px 70px}
+  h1{font-size:23px;margin-bottom:4px}.sub{color:var(--muted);margin-bottom:22px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:26px;margin-bottom:20px}
+  .card h2{font-size:17px;margin-bottom:6px}
+  .card .desc{color:var(--muted);font-size:13.5px;margin-bottom:16px}
+  .btn{border:0;cursor:pointer;font:inherit;font-weight:600;padding:10px 16px;border-radius:11px;background:var(--primary);color:#fff;display:inline-flex;gap:8px;align-items:center;font-size:14px}
+  .btn:hover{background:var(--primary-dark)} .btn:disabled{opacity:.6}
+  .btn.light{background:var(--card);color:var(--text);border:1px solid var(--border)}
+  .btn.light:hover{border-color:var(--primary);color:var(--primary)}
+  .btn.sm{padding:7px 12px;font-size:13px}
+  label{display:block;font-size:13.5px;font-weight:600;margin:14px 0 6px}
+  input,select,textarea{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:11px;background:var(--bg);color:var(--text);font:inherit;font-size:15px}
+  input:disabled,select:disabled,textarea:disabled{opacity:.65;cursor:not-allowed}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+  textarea{min-height:80px;resize:vertical}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:640px){.grid{grid-template-columns:1fr}}
+  .row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);font-size:14.5px}
+  .row:last-child{border-bottom:0}
+  .switch{position:relative;width:46px;height:26px;flex:0 0 auto}
+  .switch input{display:none}
+  .slider{position:absolute;inset:0;background:#cbd5e1;border-radius:999px;transition:.2s;cursor:pointer}
+  .slider::before{content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+  .switch input:checked + .slider{background:var(--primary)}
+  .switch input:checked + .slider::before{transform:translateX(20px)}
+  .msg{font-size:14px;border-radius:11px;padding:11px 14px;margin-top:14px;display:none}
+  .msg.err{background:#fef2f2;color:#b91c1c;display:block}
+  .msg.ok{background:#f0fdf4;color:#15803d;display:block}
+  .badge{font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--primary-soft);color:var(--primary);margin-left:8px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border)}
+  th{color:var(--muted);font-weight:600;font-size:12.5px;text-transform:uppercase}
+  .empty{color:var(--muted);font-size:14px;padding:12px 0}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="topbar-in">
+  <a class="brand" href="login.html"><span class="dot">J</span> Justify</a>
+  <a class="btn light" id="voltar">← Voltar</a>
+</div></div>
+
+<div class="container">
+  <h1>⚙️ Configurações <span class="badge" id="roleBadge"></span></h1>
+  <p class="sub">Regras, tolerâncias, comunicações, permissões, tema e modelos de comprovativo.</p>
+
+  <div class="card">
+    <h2>Tema</h2>
+    <p class="desc">Escolha o tema de exibição da plataforma.</p>
+    <div class="row"><span>🌙 Tema escuro</span><label class="switch"><input type="checkbox" id="tema"><span class="slider"></span></label></div>
+  </div>
+
+  <div class="card">
+    <h2>Regras do sistema e tolerâncias <span id="avisoGestao" class="badge" style="display:none">somente gestão edita</span></h2>
+    <p class="desc">A gestão define as regras que valem para toda a escola.</p>
+    <label for="regras">Regras gerais</label>
+    <textarea id="regras"></textarea>
+    <div class="grid">
+      <div><label for="tolerancia">Tolerância de atraso (minutos)</label><input type="number" id="tolerancia" min="0" /></div>
+      <div><label for="prazo">Prazo para justificar (horas)</label><input type="number" id="prazo" min="0" /></div>
+    </div>
+    <div class="row" style="margin-top:8px"><span>Exigir atestado em toda justificativa</span><label class="switch"><input type="checkbox" id="exigir"><span class="slider"></span></label></div>
+    <div style="margin-top:16px"><button class="btn" id="salvarRegras" disabled>Salvar regras</button></div>
+  </div>
+
+  <div class="card">
+    <h2>Comunicações</h2>
+    <p class="desc">Envie uma mensagem direta para a gestão.</p>
+    <label for="contatoMsg">Mensagem para a gestão</label>
+    <textarea id="contatoMsg" placeholder="Escreva sua mensagem, dúvida ou solicitação..."></textarea>
+    <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn" id="enviarContato">Enviar à gestão</button>
+      <a class="btn light" id="mailGestao" href="#">✉️ Enviar e-mail</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Permissões</h2>
+    <p class="desc">Resumo das permissões por perfil. A gestão pode ajustar as descrições.</p>
+    <label for="permissoes">Permissões</label>
+    <textarea id="permissoes"></textarea>
+    <div style="margin-top:16px"><button class="btn" id="salvarPerm" disabled>Salvar permissões</button></div>
+  </div>
+
+  <div class="card">
+    <h2>Modelos de comprovativo</h2>
+    <p class="desc">Exportações e relatórios de justificativas. Use os modelos para gerar documentos.</p>
+    <div id="modelos"><p class="empty">Carregando...</p></div>
+
+    <div id="novoModelo" style="display:none;margin-top:18px;border-top:1px solid var(--border);padding-top:16px">
+      <label for="mNome">Nome do modelo</label>
+      <input id="mNome" placeholder="Ex.: Modelo Educação Infantil" />
+      <label for="mDesc">Descrição</label>
+      <input id="mDesc" placeholder="Para que serve este modelo" />
+      <label for="mConteudo">Conteúdo (placeholders: {{aluno}} {{turma}} {{turno}} {{tipo}} {{data}} {{horario}} {{aula}} {{motivo}} {{emissao}})</label>
+      <textarea id="mConteudo"></textarea>
+      <div style="margin-top:12px"><button class="btn" id="salvarModelo">Adicionar modelo</button></div>
+    </div>
+
+    <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn light" id="exportCSV">⬇️ Exportar justificativas (CSV)</button>
+    </div>
+    <div class="msg" id="msg"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = "https://vavtaexniwctxkquuuos.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_gLs2FLF0YM02bsMdQkfAdA_QYt75LB-";
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const $ = (id) => document.getElementById(id);
+  const esc = (s)=> (s==null?'':String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const show=(t,c)=>{ const m=$('msg'); m.textContent=t; m.className='msg '+c; };
+  let perfil=null, ehGestao=false, cfg={};
+
+  /* tema */
+  const aplicarTema = (t) => { document.documentElement.setAttribute('data-theme', t==='escuro'?'escuro':''); localStorage.setItem('justify_tema', t); };
+  if (localStorage.getItem('justify_tema')==='escuro') document.documentElement.setAttribute('data-theme','escuro');
+  $('tema').checked = localStorage.getItem('justify_tema')==='escuro';
+  $('tema').onchange = () => aplicarTema($('tema').checked ? 'escuro' : 'claro');
+
+  (async function init(){
+    const { data:{ user } } = await db.auth.getUser();
+    if(!user) return location.href='login.html';
+    const { data } = await db.from('profiles').select('*').eq('id',user.id).single();
+    if(!data) return location.href='login.html';
+    perfil=data; ehGestao = data.role==='gestao';
+    $('roleBadge').textContent = data.role;
+    $('voltar').href = data.role==='gestao' ? 'gestao.html' : (data.role==='professor' ? 'professor.html' : 'aluno.html');
+
+    const { data: rows } = await db.from('configuracoes').select('*');
+    (rows||[]).forEach(r => cfg[r.chave] = r.valor);
+
+    $('regras').value = cfg['regras'] || '';
+    $('tolerancia').value = cfg['tolerancia_atraso_min'] || '10';
+    $('prazo').value = cfg['prazo_justificativa_horas'] || '48';
+    $('exigir').checked = cfg['exigir_atestado'] === 'true';
+    $('permissoes').value = cfg['permissoes'] || '';
+    $('mailGestao').href = 'mailto:' + (cfg['contato_gestao']||'gestao@escola.com');
+
+    if(!ehGestao){
+      ['regras','tolerancia','prazo','exigir','permissoes'].forEach(id => $(id).disabled = true);
+      $('avisoGestao').style.display='inline-block';
+    } else {
+      $('salvarRegras').disabled=false; $('salvarPerm').disabled=false;
+      $('novoModelo').style.display='block';
+    }
+    await carregarModelos();
+  })();
+
+  async function salvar(chave, valor){
+    const { error } = await db.from('configuracoes').upsert({ chave, valor: String(valor), updated_at:new Date().toISOString() }, { onConflict:'chave' });
+    return error;
+  }
+
+  $('salvarRegras').onclick = async () => {
+    const erros = await Promise.all([
+      salvar('regras', $('regras').value),
+      salvar('tolerancia_atraso_min', $('tolerancia').value),
+      salvar('prazo_justificativa_horas', $('prazo').value),
+      salvar('exigir_atestado', $('exigir').checked)
+    ]);
+    const err = erros.find(Boolean);
+    show(err ? err.message : 'Regras e tolerâncias salvas!', err?'err':'ok');
+  };
+
+  $('salvarPerm').onclick = async () => {
+    const err = await salvar('permissoes', $('permissoes').value);
+    show(err ? err.message : 'Permissões atualizadas!', err?'err':'ok');
+  };
+
+  $('enviarContato').onclick = async () => {
+    const txt = $('contatoMsg').value.trim();
+    if(!txt) return show('Escreva uma mensagem antes de enviar.', 'err');
+    const { error } = await db.from('notificacoes').insert({
+      destinatario_role: 'gestao',
+      titulo: 'Contato de ' + (perfil.nome_completo||perfil.username||'usuário'),
+      mensagem: txt, tipo: 'contato'
+    });
+    if(error) return show(error.message, 'err');
+    $('contatoMsg').value=''; show('Mensagem enviada à gestão!', 'ok');
+  };
+
+  async function carregarModelos(){
+    const { data } = await db.from('modelos_comprovativo').select('*').order('created_at',{ascending:false});
+    const box = $('modelos');
+    if(!data || !data.length){ box.innerHTML='<p class="empty">Nenhum modelo cadastrado.</p>'; return; }
+    box.innerHTML = `<table><thead><tr><th>Modelo</th><th>Descrição</th><th></th></tr></thead><tbody>
+      ${data.map(m=>`<tr><td>${esc(m.nome)}</td><td>${esc(m.descricao||'—')}</td>
+      <td><button class="btn light sm" data-baixar="${m.id}">Baixar</button></td></tr>`).join('')}
+    </tbody></table>`;
+    box.querySelectorAll('[data-baixar]').forEach(b => b.onclick = () => {
+      const m = data.find(x=>x.id===b.dataset.baixar);
+      const conteudo = (m.conteudo||'').replace(/\{\{(\w+)\}\}/g, '________');
+      baixar(`modelo-${m.nome}.html`, `<h2>${esc(m.nome)}</h2><p>${esc(m.descricao||'')}</p><p>${esc(conteudo)}</p>`);
+    });
+  }
+
+  $('salvarModelo').onclick = async () => {
+    if(!$('mNome').value.trim()) return show('Informe o nome do modelo.', 'err');
+    const { error } = await db.from('modelos_comprovativo').insert({
+      nome: $('mNome').value.trim(), descricao: $('mDesc').value.trim(),
+      conteudo: $('mConteudo').value, autor_id: perfil.id
+    });
+    if(error) return show(error.message, 'err');
+    $('mNome').value=''; $('mDesc').value=''; $('mConteudo').value='';
+    show('Modelo adicionado!', 'ok'); carregarModelos();
+  };
+
+  $('exportCSV').onclick = async () => {
+    const { data } = await db.from('justificativas').select('*').order('created_at',{ascending:false});
+    if(!data || !data.length) return show('Nenhuma justificativa para exportar.', 'err');
+    const cab = ['aluno','tipo','titulo','motivo','data_ocorrencia','horario','aula','status','autor','criado_em'];
+    const linhas = data.map(j => [j.aluno_nome,j.tipo,j.titulo,j.motivo,j.data_ocorrencia,j.horario,j.aula,j.status,j.autor_nome,j.created_at]
+      .map(v => '"' + String(v==null?'':v).replace(/"/g,'""') + '"').join(','));
+    const csv = '\uFEFF' + cab.join(',') + '\n' + linhas.join('\n');
+    const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = 'justificativas-justify.csv'; a.click(); URL.revokeObjectURL(a.href);
+    show('Relatório exportado!', 'ok');
+  };
+
+  function baixar(nome, corpoHtml){
+    const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>${esc(nome)}</title>
+      <style>body{font-family:Arial,sans-serif;max-width:720px;margin:40px auto;padding:0 24px;line-height:1.7;color:#0f172a}
+      h2{color:#4f46e5;border-bottom:2px solid #4f46e5;padding-bottom:8px}</style></head><body>${corpoHtml}</body></html>`;
+    const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = nome; a.click(); URL.revokeObjectURL(a.href);
+  }
+</script>
+</body>
+</html>
