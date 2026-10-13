@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Criar Justificativa | Justify</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{--primary:#4f46e5;--primary-dark:#4338ca;--primary-soft:#eef2ff;--accent:#06b6d4;--bg:#f8fafc;--text:#0f172a;--muted:#64748b;--card:#fff;--border:#e2e8f0;--danger:#dc2626;--shadow:0 8px 24px -14px rgba(15,23,42,.25)}
+  [data-theme="escuro"]{--bg:#0b1120;--text:#e2e8f0;--muted:#94a3b8;--card:#111c33;--border:#1e293b;--primary-soft:#1e1b4b}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text)}
+  a{color:inherit;text-decoration:none}
+  .topbar{background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:30}
+  .topbar-in{max-width:900px;margin:0 auto;padding:0 22px;height:66px;display:flex;align-items:center;justify-content:space-between}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px}
+  .brand .dot{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--primary),var(--accent));display:grid;place-items:center;color:#fff}
+  .container{max-width:900px;margin:0 auto;padding:26px 22px 70px}
+  h1{font-size:23px;margin-bottom:4px}.sub{color:var(--muted);margin-bottom:22px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:26px;margin-bottom:20px}
+  .btn{border:0;cursor:pointer;font:inherit;font-weight:600;padding:11px 18px;border-radius:11px;background:var(--primary);color:#fff;display:inline-flex;gap:8px;align-items:center;font-size:14px}
+  .btn:hover{background:var(--primary-dark)} .btn:disabled{opacity:.6}
+  .btn.light{background:var(--card);color:var(--text);border:1px solid var(--border)}
+  .btn.light:hover{border-color:var(--primary);color:var(--primary)}
+  label{display:block;font-size:13.5px;font-weight:600;margin:16px 0 6px}
+  input,select,textarea{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:11px;background:var(--bg);color:var(--text);font:inherit;font-size:15px}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+  textarea{min-height:120px;resize:vertical}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:640px){.grid{grid-template-columns:1fr}}
+  .tipos{display:flex;gap:12px;margin-bottom:6px}
+  .tipo{flex:1;border:2px solid var(--border);border-radius:14px;padding:16px;text-align:center;cursor:pointer;font-weight:600;transition:.15s}
+  .tipo.sel{border-color:var(--primary);background:var(--primary-soft);color:var(--primary)}
+  .msg{font-size:14px;border-radius:11px;padding:11px 14px;margin-top:16px;display:none}
+  .msg.err{background:#fef2f2;color:#b91c1c;display:block}
+  .msg.ok{background:#f0fdf4;color:#15803d;display:block}
+  .req{color:var(--danger)}
+  .res-aluno{position:relative}
+  .sug{position:absolute;left:0;right:0;top:100%;background:var(--card);border:1px solid var(--border);border-radius:11px;max-height:200px;overflow-y:auto;z-index:20;display:none;box-shadow:var(--shadow)}
+  .sug div{padding:10px 14px;cursor:pointer;font-size:14px;border-bottom:1px solid var(--border)}
+  .sug div:hover{background:var(--bg)}
+  .selecionado{border:1px dashed var(--primary);border-radius:11px;padding:11px 14px;margin-top:10px;font-size:14px;display:none}
+  .selecionado b{color:var(--primary)}
+  .doc{border:1px solid var(--border);border-radius:14px;padding:22px;background:var(--bg);margin-top:18px;display:none;font-size:14px;line-height:1.7}
+  .doc h2{font-size:18px;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="topbar-in">
+  <a class="brand" href="aluno.html"><span class="dot">J</span> Justify</a>
+  <a class="btn light" id="voltar">← Voltar</a>
+</div></div>
+
+<div class="container">
+  <h1 id="tituloPag">📝 Criar justificativa</h1>
+  <p class="sub">Registre a justificativa de falta ou atraso com todos os detalhes.</p>
+
+  <div class="card">
+    <label>Tipo de ocorrência <span class="req">*</span></label>
+    <div class="tipos">
+      <div class="tipo sel" data-tipo="falta">🚫 Falta</div>
+      <div class="tipo" data-tipo="atraso">⏰ Atraso</div>
+    </div>
+
+    <div id="blocoAluno" class="res-aluno" style="display:none">
+      <label for="buscaAluno">Aluno <span class="req">*</span></label>
+      <input id="buscaAluno" placeholder="Digite o nome ou username do aluno..." autocomplete="off" />
+      <div class="sug" id="sug"></div>
+      <div class="selecionado" id="alunoSel"></div>
+    </div>
+
+    <label for="titulo">Título da justificativa <span class="req">*</span></label>
+    <input id="titulo" placeholder="Ex.: Consulta médica" required />
+
+    <label for="motivo">Motivo <span class="req">*</span></label>
+    <textarea id="motivo" placeholder="Descreva o motivo da ausência ou atraso (obrigatório)..." required></textarea>
+
+    <div class="grid">
+      <div><label for="data">Data da ocorrência <span class="req">*</span></label><input type="date" id="data" required /></div>
+      <div><label for="horario">Horário</label><input type="time" id="horario" /></div>
+    </div>
+
+    <label for="aula">Aula / disciplina</label>
+    <input id="aula" placeholder="Ex.: Matemática - 2ª aula" />
+
+    <label for="atestado">Atestado / anexo (opcional)</label>
+    <input type="file" id="atestado" accept="image/*,application/pdf" />
+
+    <div style="margin-top:22px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn" id="salvar">Salvar justificativa</button>
+      <button class="btn light" id="gerar" type="button">📄 Baixar documento</button>
+      <button class="btn light" id="imprimir" type="button">🖨️ Imprimir / PDF</button>
+    </div>
+    <div class="msg" id="msg"></div>
+
+    <div class="doc" id="doc"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = "https://vavtaexniwctxkquuuos.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_gLs2FLF0YM02bsMdQkfAdA_QYt75LB-";
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  if (localStorage.getItem('justify_tema') === 'escuro') document.documentElement.setAttribute('data-theme','escuro');
+
+  const $ = (id) => document.getElementById(id);
+  const esc = (s)=> (s==null?'':String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const show=(t,c)=>{ const m=$('msg'); m.textContent=t; m.className='msg '+c; };
+  let eu=null, perfil=null, tipo='falta', alunoSel=null;
+
+  (async function init(){
+    const { data:{ user } } = await db.auth.getUser();
+    if(!user) return location.href='login.html';
+    eu=user;
+    const { data } = await db.from('profiles').select('*').eq('id',user.id).single();
+    if(!data || (data.role!=='aluno' && data.role!=='professor')) return location.href='login.html';
+    perfil=data;
+    $('voltar').href = data.role==='professor' ? 'professor.html' : 'aluno.html';
+    const hoje = new Date().toISOString().slice(0,10);
+    $('data').value = hoje;
+
+    if(data.role==='professor'){
+      $('blocoAluno').style.display='block';
+      $('tituloPag').textContent='📝 Lançar atraso / falta de aluno';
+    } else {
+      alunoSel = { id: data.id, nome_completo: data.nome_completo };
+    }
+  })();
+
+  document.querySelectorAll('.tipo').forEach(t => t.onclick = () => {
+    document.querySelectorAll('.tipo').forEach(x=>x.classList.remove('sel'));
+    t.classList.add('sel'); tipo = t.dataset.tipo;
+  });
+
+  /* busca de aluno (professor) */
+  let timer=null;
+  $('buscaAluno').addEventListener('input', () => {
+    clearTimeout(timer);
+    const q = $('buscaAluno').value.trim();
+    if(q.length<2){ $('sug').style.display='none'; return; }
+    timer = setTimeout(async () => {
+      const { data } = await db.from('profiles').select('id,nome_completo,username,turma')
+        .eq('role','aluno').or(`nome_completo.ilike.%${q}%,username.ilike.%${q}%`).limit(8);
+      const sug = $('sug');
+      if(!data || !data.length){ sug.innerHTML='<div>Nenhum aluno encontrado</div>'; sug.style.display='block'; return; }
+      sug.innerHTML = data.map(a=>`<div data-id="${a.id}" data-nome="${esc(a.nome_completo)}">${esc(a.nome_completo)} — @${esc(a.username||'')} ${esc(a.turma||'')}</div>`).join('');
+      sug.style.display='block';
+      sug.querySelectorAll('div[data-id]').forEach(d => d.onclick = () => {
+        alunoSel = { id: d.dataset.id, nome_completo: d.dataset.nome };
+        $('alunoSel').innerHTML = `Aluno selecionado: <b>${esc(alunoSel.nome_completo)}</b>`;
+        $('alunoSel').style.display='block';
+        $('sug').style.display='none';
+        $('buscaAluno').value = alunoSel.nome_completo;
+      });
+    }, 250);
+  });
+
+  function validar(){
+    if(!alunoSel) { show('Selecione o aluno.', 'err'); return false; }
+    if(!$('titulo').value.trim()) { show('Informe o título da justificativa.', 'err'); return false; }
+    if(!$('motivo').value.trim()) { show('O motivo é obrigatório.', 'err'); return false; }
+    if(!$('data').value) { show('Informe a data da ocorrência.', 'err'); return false; }
+    return true;
+  }
+
+  async function uploadAtestado(){
+    const file = $('atestado').files[0];
+    if(!file) return null;
+    const path = `${eu.id}/${Date.now()}-${file.name}`;
+    const { error } = await db.storage.from('atestados').upload(path, file, { upsert:true });
+    if(error){ show('Falha ao enviar atestado: '+error.message, 'err'); return null; }
+    const { data } = db.storage.from('atestados').getPublicUrl(path);
+    return data.publicUrl;
+  }
+
+  function montarDoc(){
+    const d = $('data').value ? new Date($('data').value+'T00:00:00').toLocaleDateString('pt-BR') : '—';
+    const label = tipo==='falta' ? 'FALTA' : 'ATRASO';
+    const emissao = new Date().toLocaleString('pt-BR');
+    return `
+      <h2>Comprovativo de Justificativa — ${label}</h2>
+      <p><b>Aluno:</b> ${esc(alunoSel?alunoSel.nome_completo:'—')}</p>
+      <p><b>Tipo:</b> ${label}</p>
+      <p><b>Título:</b> ${esc($('titulo').value||'—')}</p>
+      <p><b>Motivo:</b> ${esc($('motivo').value||'—')}</p>
+      <p><b>Data da ocorrência:</b> ${d}</p>
+      <p><b>Horário:</b> ${esc($('horario').value||'—')}</p>
+      <p><b>Aula/disciplina:</b> ${esc($('aula').value||'—')}</p>
+      <p><b>Atestado anexado:</b> ${$('atestado').files[0] ? $('atestado').files[0].name : 'Não'}</p>
+      <p><b>Emitido por:</b> ${esc(perfil.nome_completo||'—')} (${esc(perfil.role||'')})</p>
+      <p><b>Emitido em:</b> ${emissao}</p>
+      <p style="margin-top:14px;color:#64748b">Documento gerado automaticamente pela plataforma Justify.</p>`;
+  }
+
+  $('gerar').onclick = () => {
+    if(!validar()) return;
+    $('doc').innerHTML = montarDoc();
+    $('doc').style.display='block';
+    const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Justificativa - ${esc(alunoSel.nome_completo)}</title>
+      <style>body{font-family:Arial,sans-serif;max-width:720px;margin:40px auto;padding:0 24px;color:#0f172a;line-height:1.7}
+      h2{color:#4f46e5;border-bottom:2px solid #4f46e5;padding-bottom:8px}u{text-decoration:none}</style></head><body>
+      ${$('doc').innerHTML}</body></html>`;
+    const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `justificativa-${(alunoSel.nome_completo||'aluno').replace(/\s+/g,'-').toLowerCase()}-${$('data').value||''}.html`;
+    a.click(); URL.revokeObjectURL(a.href);
+    show('Documento gerado e baixado!', 'ok');
+  };
+
+  $('imprimir').onclick = () => {
+    if(!validar()) return;
+    const w = window.open('', '_blank');
+    w.document.write(`<html><head><title>Justificativa</title>
+      <style>body{font-family:Arial,sans-serif;max-width:720px;margin:40px auto;padding:0 24px;line-height:1.7}
+      h2{color:#4f46e5;border-bottom:2px solid #4f46e5;padding-bottom:8px}</style></head><body>${montarDoc()}</body></html>`);
+    w.document.close(); w.focus(); w.print();
+  };
+
+  $('salvar').onclick = async () => {
+    if(!validar()) return;
+    const btn=$('salvar'); btn.disabled=true; btn.textContent='Salvando...';
+    try{
+      const atestado_url = await uploadAtestado();
+      const { error } = await db.from('justificativas').insert({
+        autor_id: eu.id, autor_nome: perfil.nome_completo,
+        aluno_id: alunoSel.id, aluno_nome: alunoSel.nome_completo,
+        tipo, titulo: $('titulo').value.trim(), motivo: $('motivo').value.trim(),
+        atestado_url, data_ocorrencia: $('data').value || null,
+        horario: $('horario').value || null, aula: $('aula').value.trim() || null,
+        status: 'pendente'
+      });
+      if(error) throw error;
+      $('doc').innerHTML = montarDoc(); $('doc').style.display='block';
+      show('Justificativa salva com sucesso! Você já pode baixar o documento.', 'ok');
+    }catch(err){
+      show(err.message||'Erro ao salvar.', 'err');
+    }finally{ btn.disabled=false; btn.textContent='Salvar justificativa'; }
+  };
+</script>
+</body>
+</html>
