@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Entrar | Justify</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{--primary:#4f46e5;--primary-dark:#4338ca;--primary-soft:#eef2ff;--accent:#06b6d4;--bg:#f8fafc;--text:#0f172a;--muted:#64748b;--card:#fff;--border:#e2e8f0;--danger:#dc2626;--shadow:0 10px 30px -12px rgba(15,23,42,.18)}
+  [data-theme="escuro"]{--bg:#0b1120;--text:#e2e8f0;--muted:#94a3b8;--card:#111c33;--border:#1e293b;--primary-soft:#1e1b4b;--shadow:0 10px 30px -12px rgba(0,0,0,.6)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:grid;place-items:center;padding:24px}
+  .auth{width:100%;max-width:430px;background:var(--card);border:1px solid var(--border);border-radius:22px;padding:34px;box-shadow:var(--shadow)}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;justify-content:center;margin-bottom:6px}
+  .brand .dot{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--accent));display:grid;place-items:center;color:#fff}
+  .sub{text-align:center;color:var(--muted);font-size:14px;margin-bottom:26px}
+  label{display:block;font-size:13.5px;font-weight:600;margin:0 0 6px}
+  input{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:11px;background:var(--bg);color:var(--text);font:inherit;font-size:15px;margin-bottom:16px}
+  input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+  .btn{width:100%;border:0;cursor:pointer;font:inherit;font-weight:700;padding:13px;border-radius:12px;background:var(--primary);color:#fff;font-size:15px;transition:.18s}
+  .btn:hover{background:var(--primary-dark)}
+  .btn:disabled{opacity:.6;cursor:wait}
+  .msg{font-size:14px;border-radius:11px;padding:11px 14px;margin-bottom:16px;display:none}
+  .msg.err{background:#fef2f2;color:#b91c1c;display:block;border:1px solid #fecaca}
+  .msg.ok{background:#f0fdf4;color:#15803d;display:block;border:1px solid #bbf7d0}
+  [data-theme="escuro"] .msg.err{background:#450a0a;color:#fca5a5;border-color:#7f1d1d}
+  [data-theme="escuro"] .msg.ok{background:#052e16;color:#86efac;border-color:#14532d}
+  .links{text-align:center;font-size:14px;color:var(--muted);margin-top:18px;line-height:2}
+  .links a{color:var(--primary);font-weight:600}
+  .back{display:block;text-align:center;margin-top:14px;color:var(--muted);font-size:13.5px}
+</style>
+</head>
+<body>
+  <form class="auth" id="form">
+    <div class="brand"><span class="dot">J</span> Justify</div>
+    <p class="sub">Acesse sua conta para gerenciar justificativas</p>
+    <div class="msg" id="msg"></div>
+
+    <label for="email">E-mail</label>
+    <input type="email" id="email" placeholder="voce@escola.com" required autocomplete="email" />
+
+    <label for="senha">Senha</label>
+    <input type="password" id="senha" placeholder="••••••••" required autocomplete="current-password" />
+
+    <button class="btn" id="entrar" type="submit">Entrar</button>
+
+    <div class="links">
+      <div>Esqueceu a senha? <a href="#" id="recuperar">Redefinir</a></div>
+      <div>Não tem conta? Cadastre-se como
+        <a href="cadastro-aluno.html">aluno</a>,
+        <a href="cadastro-professor.html">professor</a> ou
+        <a href="cadastro-gestao.html">gestão</a>.
+      </div>
+    </div>
+    <a class="back" href="../../index.html">← Voltar para a página inicial</a>
+  </form>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  /* =====================================================================
+     CONFIGURAÇÃO SUPABASE
+     1) Rode /supabase/schema.sql no SQL Editor do seu projeto Supabase.
+     2) Authentication > Providers > Email: desative "Confirm email".
+     3) Substitua os valores abaixo pelos do seu projeto (Settings > API).
+     ===================================================================== */
+  const SUPABASE_URL = "https://vavtaexniwctxkquuuos.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_gLs2FLF0YM02bsMdQkfAdA_QYt75LB-";
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  if (localStorage.getItem('justify_tema') === 'escuro') document.documentElement.setAttribute('data-theme','escuro');
+
+  const msg = document.getElementById('msg');
+  const show = (t, tipo) => { msg.textContent = t; msg.className = 'msg ' + tipo; };
+
+  const destino = { aluno:'aluno.html', professor:'professor.html', gestao:'gestao.html' };
+
+  const form = document.getElementById('form');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('entrar');
+    btn.disabled = true; btn.textContent = 'Entrando...'; msg.className = 'msg';
+    try {
+      const { data, error } = await db.auth.signInWithPassword({
+        email: document.getElementById('email').value.trim(),
+        password: document.getElementById('senha').value
+      });
+      if (error) throw error;
+
+      const { data: perfil, error: perr } = await db
+        .from('profiles').select('role, status').eq('id', data.user.id).single();
+      if (perr || !perfil) throw new Error('Perfil não encontrado. Refaça o cadastro.');
+
+      if (perfil.status && perfil.status !== 'ativo') throw new Error('Conta inativa. Contate a gestão.');
+
+      show('Login realizado! Redirecionando...', 'ok');
+      location.href = destino[perfil.role] || 'aluno.html';
+    } catch (err) {
+      show(err.message || 'Falha ao entrar. Verifique suas credenciais.', 'err');
+      btn.disabled = false; btn.textContent = 'Entrar';
+    }
+  });
+
+  document.getElementById('recuperar').addEventListener('click', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value.trim();
+    if (!email) return show('Digite seu e-mail acima para redefinir a senha.', 'err');
+    const { error } = await db.auth.resetPasswordForEmail(email, {
+      redirectTo: location.origin + location.pathname.replace('login.html','redefinir-senha.html')
+    });
+    show(error ? error.message : 'Enviamos um link de redefinição para o seu e-mail.', error ? 'err' : 'ok');
+  });
+</script>
+</body>
+</html>
