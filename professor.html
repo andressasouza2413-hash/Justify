@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Painel do Professor | Justify</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{--primary:#4f46e5;--primary-dark:#4338ca;--primary-soft:#eef2ff;--accent:#06b6d4;--bg:#f8fafc;--text:#0f172a;--muted:#64748b;--card:#fff;--border:#e2e8f0;--danger:#dc2626;--success:#16a34a;--warning:#d97706;--shadow:0 8px 24px -14px rgba(15,23,42,.25)}
+  [data-theme="escuro"]{--bg:#0b1120;--text:#e2e8f0;--muted:#94a3b8;--card:#111c33;--border:#1e293b;--primary-soft:#1e1b4b;--shadow:0 8px 24px -14px rgba(0,0,0,.6)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text)}
+  a{color:inherit;text-decoration:none}
+  .topbar{background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:30}
+  .topbar-in{max-width:1200px;margin:0 auto;padding:0 22px;height:66px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px}
+  .brand .dot{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--primary),var(--accent));display:grid;place-items:center;color:#fff}
+  .who{display:flex;align-items:center;gap:12px;font-size:14px}
+  .who small{color:var(--muted);display:block}
+  .container{max-width:1200px;margin:0 auto;padding:26px 22px 70px}
+  h1{font-size:24px;letter-spacing:-.6px;margin-bottom:4px}
+  .sub{color:var(--muted);margin-bottom:24px}
+  .btn{border:0;cursor:pointer;font:inherit;font-weight:600;padding:10px 16px;border-radius:11px;background:var(--primary);color:#fff;display:inline-flex;gap:8px;align-items:center;font-size:14px;transition:.15s}
+  .btn:hover{background:var(--primary-dark)} .btn:disabled{opacity:.6}
+  .btn.light{background:var(--card);color:var(--text);border:1px solid var(--border)}
+  .btn.light:hover{border-color:var(--primary);color:var(--primary)}
+  .btn.sm{padding:7px 12px;font-size:13px}
+  .btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
+  .acoes{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-bottom:26px}
+  .acao{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;transition:.18s;text-align:left}
+  .acao:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:color-mix(in srgb,var(--primary) 40%,var(--border))}
+  .acao .ic{width:44px;height:44px;border-radius:12px;background:var(--primary-soft);display:grid;place-items:center;font-size:20px;margin-bottom:12px}
+  .acao b{display:block;font-size:15px} .acao small{color:var(--muted)}
+  .cols{display:grid;grid-template-columns:1.15fr .85fr;gap:22px}
+  @media(max-width:900px){.cols{grid-template-columns:1fr}}
+  .panel{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:22px}
+  .panel-h{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .panel-h h2{font-size:16px}
+  .panel-b{padding:18px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--border)}
+  th{color:var(--muted);font-weight:600;font-size:12.5px;text-transform:uppercase;letter-spacing:.4px}
+  tr:last-child td{border-bottom:0}
+  .empty{color:var(--muted);font-size:14px;padding:14px 0;text-align:center}
+  .pill{font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:999px;display:inline-block}
+  .pill.falta{background:#fee2e2;color:#b91c1c} .pill.atraso{background:#fef3c7;color:#b45309}
+  .pill.pendente{background:#fef3c7;color:#b45309} .pill.aprovado{background:#dcfce7;color:#15803d} .pill.recusado{background:#fee2e2;color:#b91c1c}
+  .notif{border-left:3px solid var(--primary);background:var(--bg);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+  .notif b{font-size:14px} .notif p{font-size:13.5px;color:var(--muted);margin-top:3px}
+  .notif time{font-size:11.5px;color:var(--muted)}
+  .search{display:flex;gap:10px;margin-bottom:14px}
+  .search input{flex:1;padding:11px 14px;border:1px solid var(--border);border-radius:11px;background:var(--bg);color:var(--text);font:inherit}
+  .search input:focus{outline:none;border-color:var(--primary)}
+  .res{border:1px solid var(--border);border-radius:11px;padding:12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .res b{font-size:14px} .res small{color:var(--muted)}
+  /* chat */
+  .chat-fab{position:fixed;right:24px;bottom:24px;z-index:50;width:56px;height:56px;border-radius:50%;background:var(--primary);color:#fff;border:0;cursor:pointer;font-size:24px;box-shadow:var(--shadow)}
+  .chat{position:fixed;right:24px;bottom:92px;z-index:50;width:360px;max-width:calc(100vw - 32px);height:520px;max-height:70vh;background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);display:none;flex-direction:column;overflow:hidden}
+  .chat.open{display:flex}
+  .chat header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+  .chat header b{font-size:15px}
+  .chat .contatos{overflow-y:auto;flex:1}
+  .chat .contato{padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;gap:10px;align-items:center}
+  .chat .contato:hover{background:var(--bg)}
+  .chat .avatar{width:36px;height:36px;border-radius:50%;background:var(--primary-soft);display:grid;place-items:center;font-weight:700;color:var(--primary)}
+  .chat .msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px;background:var(--bg)}
+  .bubble{max-width:80%;padding:9px 13px;border-radius:14px;font-size:14px;background:var(--card);border:1px solid var(--border)}
+  .bubble.me{align-self:flex-end;background:var(--primary);color:#fff;border-color:var(--primary)}
+  .bubble time{display:block;font-size:10.5px;opacity:.7;margin-top:3px}
+  .chat form{display:flex;gap:8px;padding:12px;border-top:1px solid var(--border)}
+  .chat form input{flex:1;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text);font:inherit}
+  .chat .head{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border)}
+  .toast{position:fixed;left:50%;top:18px;transform:translateX(-50%);background:var(--text);color:var(--card);padding:11px 18px;border-radius:12px;font-size:14px;z-index:99;display:none;box-shadow:var(--shadow)}
+  .modal{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;place-items:center;z-index:80;padding:20px}
+  .modal.open{display:grid}
+  .modal .box{background:var(--card);border:1px solid var(--border);border-radius:18px;max-width:520px;width:100%;max-height:85vh;overflow-y:auto;padding:24px}
+  .modal h3{margin-bottom:14px}
+  .kv{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--border);font-size:14px}
+  .kv span{color:var(--muted)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="professor.html"><span class="dot">J</span> Justify</a>
+    <div class="who">
+      <div style="text-align:right"><b id="nomeTopo">...</b><small id="roleTopo">Professor</small></div>
+      <a class="btn light sm" href="professor-perfil.html">Perfil</a>
+      <a class="btn light sm" href="configuracoes.html">Config</a>
+      <button class="btn sm" id="sair">Sair</button>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <h1>Painel do Professor</h1>
+  <p class="sub">Lance avisos, registre atrasos e faltas, converse e acompanhe seus alunos.</p>
+
+  <div class="acoes">
+    <a class="acao" href="criar-aviso.html"><div class="ic">📣</div><b>Lançar avisos</b><small>Criar e publicar avisos</small></a>
+    <a class="acao" href="criar-justificativa.html"><div class="ic">⏰</div><b>Lançar atrasos</b><small>Criar justificativa de falta/atraso</small></a>
+    <button class="acao" onclick="abrirChat('gestao')"><div class="ic">🏫</div><b>Chat com a gestão</b><small>Fale com a administração</small></button>
+    <button class="acao" onclick="abrirChat('aluno')"><div class="ic">💬</div><b>Chat com alunos</b><small>Converse com os alunos</small></button>
+    <a class="acao" href="#pesquisa"><div class="ic">🔎</div><b>Pesquisar aluno</b><small>Ver perfil e situação</small></a>
+  </div>
+
+  <div class="cols">
+    <div>
+      <div class="panel">
+        <div class="panel-h"><h2>🗓️ Faltas e atrasos do dia</h2><span class="pill" id="hojeTag"></span></div>
+        <div id="ocorrencias" style="overflow-x:auto"></div>
+      </div>
+
+      <div class="panel" id="pesquisa">
+        <div class="panel-h"><h2>🔎 Pesquisar aluno</h2></div>
+        <div class="panel-b">
+          <div class="search">
+            <input id="buscaAluno" placeholder="Nome, username, série ou turma..." />
+            <button class="btn" id="btnBusca">Buscar</button>
+          </div>
+          <div id="resAlunos"></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <div class="panel-h"><h2>🔔 Notificações e avisos</h2></div>
+        <div class="panel-b" id="notificacoes"><p class="empty">Carregando...</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button class="chat-fab" onclick="toggleChat()" title="Chat">💬</button>
+
+<div class="chat" id="chat">
+  <header><b id="chatTitulo">Chat</b><button class="btn ghost sm" onclick="toggleChat()">✕</button></header>
+  <div id="chatBody"></div>
+</div>
+
+<div class="modal" id="modal"><div class="box" id="modalBox"></div></div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  /* ===== CONFIGURAÇÃO SUPABASE (veja instruções em login.html) ===== */
+  const SUPABASE_URL = "https://vavtaexniwctxkquuuos.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_gLs2FLF0YM02bsMdQkfAdA_QYt75LB-";
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  if (localStorage.getItem('justify_tema') === 'escuro') document.documentElement.setAttribute('data-theme','escuro');
+
+  let eu = null, perfil = null, contatoAtual = null, canalChat = null, canalMsg = null;
+  const $ = (id) => document.getElementById(id);
+  const toast = (t) => { const el = $('toast'); el.textContent = t; el.style.display = 'block'; clearTimeout(el._t); el._t = setTimeout(()=>el.style.display='none', 2600); };
+  const hoje = () => new Date().toISOString().slice(0,10);
+  const fmt = (d) => d ? new Date(d).toLocaleString('pt-BR', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '—';
+
+  (async function init(){
+    const { data: { user } } = await db.auth.getUser();
+    if (!user) return location.href = 'login.html';
+    eu = user;
+    const { data } = await db.from('profiles').select('*').eq('id', user.id).single();
+    if (!data || data.role !== 'professor') return location.href = 'login.html';
+    perfil = data;
+    $('nomeTopo').textContent = perfil.nome_completo || perfil.username || 'Professor';
+    $('roleTopo').textContent = (perfil.materias && perfil.materias.length) ? perfil.materias.join(', ') : 'Professor';
+    $('hojeTag').textContent = new Date().toLocaleDateString('pt-BR');
+    await Promise.all([carregarNotificacoes(), carregarOcorrencias(), carregarSugestoes()]);
+  })();
+
+  $('sair').onclick = async () => { await db.auth.signOut(); location.href = 'login.html'; };
+
+  async function carregarNotificacoes(){
+    const { data } = await db.from('avisos').select('*')
+      .order('created_at', { ascending:false }).limit(40);
+    const rel = (data||[]).filter(a => {
+      const roleOk = !a.destinatario_role || a.destinatario_role === 'todos' || a.destinatario_role === 'professor';
+      const turmaOk = !a.turma || (perfil.turmas||[]).includes(a.turma);
+      return roleOk && turmaOk;
+    }).slice(0,15);
+    const box = $('notificacoes');
+    if (!rel.length) { box.innerHTML = '<p class="empty">Nenhum aviso no momento.</p>'; return; }
+    box.innerHTML = rel.map(a => `
+      <div class="notif">
+        <b>${esc(a.titulo)}</b>
+        <p>${esc(a.assunto||'')}</p>
+        <time>${fmt(a.created_at)} ${a.autor_nome?'• '+esc(a.autor_nome):''}</time>
+      </div>`).join('');
+  }
+
+  async function carregarOcorrencias(){
+    const { data } = await db.from('justificativas').select('*')
+      .eq('data_ocorrencia', hoje())
+      .order('created_at', { ascending:false });
+    const box = $('ocorrencias');
+    if (!data || !data.length) { box.innerHTML = '<p class="empty" style="padding:18px">Nenhuma falta ou atraso registrado hoje.</p>'; return; }
+    box.innerHTML = `<table>
+      <thead><tr><th>Aluno</th><th>Tipo</th><th>Aula</th><th>Situação</th><th></th></tr></thead>
+      <tbody>${data.map(j => `
+        <tr>
+          <td>${esc(j.aluno_nome||'—')}</td>
+          <td><span class="pill ${j.tipo}">${j.tipo}</span></td>
+          <td>${esc(j.aula||'—')}</td>
+          <td><span class="pill ${j.status}">${j.status}</span></td>
+          <td><button class="btn light sm" onclick="verJustificativa('${j.id}')">Ver</button></td>
+        </tr>`).join('')}</tbody></table>`;
+  }
+
+  window.verJustificativa = async (id) => {
+    const { data: j } = await db.from('justificativas').select('*').eq('id', id).single();
+    if (!j) return;
+    $('modalBox').innerHTML = `
+      <h3>Justificativa — ${esc(j.tipo)}</h3>
+      <div class="kv"><span>Aluno</span><b>${esc(j.aluno_nome||'—')}</b></div>
+      <div class="kv"><span>Título</span><b>${esc(j.titulo||'—')}</b></div>
+      <div class="kv"><span>Motivo</span><b style="text-align:right;max-width:60%">${esc(j.motivo||'—')}</b></div>
+      <div class="kv"><span>Data</span><b>${j.data_ocorrencia||'—'}</b></div>
+      <div class="kv"><span>Horário</span><b>${esc(j.horario||'—')}</b></div>
+      <div class="kv"><span>Aula</span><b>${esc(j.aula||'—')}</b></div>
+      <div class="kv"><span>Situação</span><b>${j.status}</b></div>
+      ${j.atestado_url?`<div class="kv"><span>Atestado</span><a href="${j.atestado_url}" target="_blank">Abrir anexo</a></div>`:''}
+      <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn" onclick="decidir('${j.id}','aprovado')">Aprovar</button>
+        <button class="btn light" onclick="decidir('${j.id}','recusado')">Recusar</button>
+        <button class="btn ghost" onclick="fecharModal()">Fechar</button>
+      </div>`;
+    $('modal').classList.add('open');
+  };
+  window.decidir = async (id, status) => {
+    const { error } = await db.from('justificativas').update({ status }).eq('id', id);
+    if (error) return toast(error.message);
+    toast('Situação atualizada: ' + status); fecharModal(); carregarOcorrencias();
+  };
+  window.fecharModal = () => $('modal').classList.remove('open');
+
+  /* Pesquisa de aluno */
+  $('btnBusca').onclick = buscarAluno;
+  $('buscaAluno').addEventListener('keydown', e => { if (e.key === 'Enter') buscarAluno(); });
+  async function buscarAluno(){
+    const q = $('buscaAluno').value.trim();
+    if (!q) return;
+    const { data } = await db.from('profiles').select('id,nome_completo,username,serie,turma,turno,avatar_url')
+      .eq('role','aluno')
+      .or(`nome_completo.ilike.%${q}%,username.ilike.%${q}%,serie.ilike.%${q}%,turma.ilike.%${q}%`)
+      .limit(12);
+    const box = $('resAlunos');
+    if (!data || !data.length) { box.innerHTML = '<p class="empty">Nenhum aluno encontrado.</p>'; return; }
+    box.innerHTML = data.map(a => `
+      <div class="res">
+        <div><b>${esc(a.nome_completo)}</b><br><small>@${esc(a.username||'—')} • ${esc(a.serie||'')} ${esc(a.turma||'')} • ${esc(a.turno||'')}</small></div>
+        <button class="btn sm" onclick="verAluno('${a.id}')">Perfil</button>
+      </div>`).join('');
+  }
+  window.verAluno = async (id) => {
+    const { data: a } = await db.from('profiles').select('*').eq('id', id).single();
+    const { data: js } = await db.from('justificativas').select('*').eq('aluno_id', id)
+      .order('created_at',{ascending:false}).limit(10);
+    $('modalBox').innerHTML = `
+      <h3>${esc(a.nome_completo)}</h3>
+      <div class="kv"><span>Username</span><b>@${esc(a.username||'—')}</b></div>
+      <div class="kv"><span>Série/Turma</span><b>${esc(a.serie||'')} ${esc(a.turma||'')}</b></div>
+      <div class="kv"><span>Turno</span><b>${esc(a.turno||'—')}</b></div>
+      <div class="kv"><span>E-mail</span><b>${esc(a.email||'—')}</b></div>
+      <h3 style="margin-top:20px;font-size:15px">Últimas justificativas</h3>
+      ${(js&&js.length)?js.map(j=>`<div class="kv"><span>${j.data_ocorrencia||''} • ${j.tipo}</span><b>${j.status}</b></div>`).join(''):'<p class="empty">Nenhuma justificativa.</p>'}
+      <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn" onclick="fecharModal();abrirChat('aluno','${a.id}','${esc(a.nome_completo)}')">Enviar mensagem</button>
+        <button class="btn ghost" onclick="fecharModal()">Fechar</button>
+      </div>`;
+    $('modal').classList.add('open');
+  };
+
+  /* ================= CHAT ================= */
+  window.toggleChat = () => $('chat').classList.toggle('open');
+
+  window.abrirChat = async (role, id, nome) => {
+    canalChat = role;
+    $('chat').classList.add('open');
+    if (id && nome) return abrirConversa({ id, nome_completo: nome, role });
+    $('chatTitulo').textContent = role === 'gestao' ? 'Chat com a gestão' : 'Chat com alunos';
+    $('chatBody').innerHTML = '<div class="contatos" id="lista"><p class="empty" style="padding:16px">Carregando contatos...</p></div>';
+    const { data } = await db.from('profiles').select('id,nome_completo,username,role')
+      .eq('role', role).neq('id', eu.id).order('nome_completo').limit(50);
+    const box = $('lista');
+    if (!data || !data.length) { box.innerHTML = `<p class="empty" style="padding:16px">Nenhum contato de ${role}.</p>`; return; }
+    box.innerHTML = data.map(c => `
+      <div class="contato" onclick='abrirConversa(${JSON.stringify(c)})'>
+        <div class="avatar">${(c.nome_completo||'?')[0].toUpperCase()}</div>
+        <div><b>${esc(c.nome_completo)}</b><br><small style="color:var(--muted)">@${esc(c.username||'—')}</small></div>
+      </div>`).join('');
+  };
+
+  window.abrirConversa = async (c) => {
+    contatoAtual = c;
+    $('chatTitulo').textContent = c.nome_completo || 'Conversa';
+    $('chatBody').innerHTML = `
+      <div class="head"><button class="btn ghost sm" onclick="abrirChat('${canalChat}')">←</button><b>${esc(c.nome_completo)}</b></div>
+      <div class="msgs" id="msgs"></div>
+      <form id="formMsg"><input id="inputMsg" placeholder="Escreva uma mensagem..." autocomplete="off"/><button class="btn" type="submit">➤</button></form>`;
+    await carregarMensagens();
+    $('formMsg').addEventListener('submit', enviarMensagem);
+    if (canalMsg) db.removeChannel(canalMsg);
+    canalMsg = db.channel('chat-prof')
+      .on('postgres_changes', { event:'INSERT', schema:'public', table:'mensagens' }, payload => {
+        const m = payload.new;
+        if ((m.remetente_id === eu.id && m.destinatario_id === contatoAtual.id) ||
+            (m.remetente_id === contatoAtual.id && m.destinatario_id === eu.id)) {
+          if (m.remetente_id !== eu.id) carregarMensagens();
+        }
+      }).subscribe();
+  };
+
+  async function carregarMensagens(){
+    const { data } = await db.from('mensagens').select('*')
+      .or(`and(remetente_id.eq.${eu.id},destinatario_id.eq.${contatoAtual.id}),and(remetente_id.eq.${contatoAtual.id},destinatario_id.eq.${eu.id})`)
+      .order('created_at', { ascending:true }).limit(200);
+    const box = $('msgs');
+    if (!box) return;
+    box.innerHTML = (data||[]).map(m => `
+      <div class="bubble ${m.remetente_id===eu.id?'me':''}">
+        ${esc(m.conteudo)}<time>${fmt(m.created_at)}</time>
+      </div>`).join('') || '<p class="empty">Nenhuma mensagem ainda. Diga olá!</p>';
+    box.scrollTop = box.scrollHeight;
+  }
+
+  async function enviarMensagem(e){
+    e.preventDefault();
+    const inp = $('inputMsg'); const texto = inp.value.trim();
+    if (!texto) return;
+    inp.value = '';
+    const { error } = await db.from('mensagens').insert({
+      remetente_id: eu.id, remetente_nome: perfil.nome_completo,
+      destinatario_id: contatoAtual.id, conteudo: texto
+    });
+    if (error) return toast(error.message);
+    carregarMensagens();
+  }
+
+  async function carregarSugestoes(){ /* reservado para expansões futuras */ }
+
+  function esc(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+</script>
+</body>
+</html>
