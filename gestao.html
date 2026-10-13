@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Painel da Gestão | Justify</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{--primary:#4f46e5;--primary-dark:#4338ca;--primary-soft:#eef2ff;--accent:#06b6d4;--bg:#f8fafc;--text:#0f172a;--muted:#64748b;--card:#fff;--border:#e2e8f0;--danger:#dc2626;--success:#16a34a;--warning:#d97706;--shadow:0 8px 24px -14px rgba(15,23,42,.25)}
+  [data-theme="escuro"]{--bg:#0b1120;--text:#e2e8f0;--muted:#94a3b8;--card:#111c33;--border:#1e293b;--primary-soft:#1e1b4b;--shadow:0 8px 24px -14px rgba(0,0,0,.6)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text)}
+  a{color:inherit;text-decoration:none}
+  .topbar{background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:30}
+  .topbar-in{max-width:1220px;margin:0 auto;padding:0 22px;height:66px;display:flex;align-items:center;justify-content:space-between}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px}
+  .brand .dot{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--primary),var(--accent));display:grid;place-items:center;color:#fff}
+  .who{display:flex;align-items:center;gap:12px;font-size:14px}.who small{color:var(--muted);display:block}
+  .container{max-width:1220px;margin:0 auto;padding:26px 22px 70px}
+  h1{font-size:24px;letter-spacing:-.6px;margin-bottom:4px}.sub{color:var(--muted);margin-bottom:24px}
+  .btn{border:0;cursor:pointer;font:inherit;font-weight:600;padding:10px 16px;border-radius:11px;background:var(--primary);color:#fff;display:inline-flex;gap:8px;align-items:center;font-size:14px}
+  .btn:hover{background:var(--primary-dark)} .btn:disabled{opacity:.6}
+  .btn.light{background:var(--card);color:var(--text);border:1px solid var(--border)}
+  .btn.light:hover{border-color:var(--primary);color:var(--primary)}
+  .btn.sm{padding:7px 12px;font-size:13px}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:26px}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px}
+  .stat .n{font-size:30px;font-weight:800}.stat .l{color:var(--muted);font-size:13.5px}
+  .stat .ic{font-size:20px;float:right}
+  .bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+  .panel{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:22px}
+  .panel-h{padding:15px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .panel-h h2{font-size:16px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--border)}
+  th{color:var(--muted);font-weight:600;font-size:12.5px;text-transform:uppercase}
+  tr:last-child td{border-bottom:0}
+  .empty{color:var(--muted);font-size:14px;padding:16px;text-align:center}
+  .pill{font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:999px;display:inline-block}
+  .pill.falta{background:#fee2e2;color:#b91c1c}.pill.atraso{background:#fef3c7;color:#b45309}
+  .pill.pendente{background:#fef3c7;color:#b45309}.pill.aprovado{background:#dcfce7;color:#15803d}.pill.recusado{background:#fee2e2;color:#b91c1c}
+  .pill.aluno{background:#e0f2fe;color:#0369a1}.pill.professor{background:#ede9fe;color:#6d28d9}.pill.gestao{background:#dcfce7;color:#166534}
+  .tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+  .tab{padding:9px 16px;border-radius:10px;font-weight:600;font-size:14px;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--muted)}
+  .tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+  .toast{position:fixed;left:50%;top:18px;transform:translateX(-50%);background:var(--text);color:var(--card);padding:11px 18px;border-radius:12px;font-size:14px;z-index:99;display:none}
+  input,select{padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text);font:inherit}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="topbar-in">
+  <a class="brand" href="gestao.html"><span class="dot">J</span> Justify · Gestão</a>
+  <div class="who">
+    <div style="text-align:right"><b id="nomeTopo">...</b><small>Gestão</small></div>
+    <a class="btn light sm" href="configuracoes.html">Configurações</a>
+    <button class="btn sm" id="sair">Sair</button>
+  </div>
+</div></div>
+
+<div class="container">
+  <h1>Painel da Gestão</h1>
+  <p class="sub">Controle total de perfis, justificativas, avisos e configurações do sistema.</p>
+
+  <div class="bar">
+    <a class="btn" href="criar-aviso.html">📣 Publicar aviso</a>
+    <a class="btn light" href="configuracoes.html">⚙️ Regras e configurações</a>
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="just">Justificativas</div>
+    <div class="tab" data-tab="usuarios">Usuários</div>
+    <div class="tab" data-tab="avisos">Avisos publicados</div>
+  </div>
+
+  <div class="panel" id="painelConteudo"><p class="empty">Carregando...</p></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = "https://vavtaexniwctxkquuuos.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_gLs2FLF0YM02bsMdQkfAdA_QYt75LB-";
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  if (localStorage.getItem('justify_tema') === 'escuro') document.documentElement.setAttribute('data-theme','escuro');
+
+  const $ = (id) => document.getElementById(id);
+  const toast = (t) => { const e=$('toast'); e.textContent=t; e.style.display='block'; clearTimeout(e._t); e._t=setTimeout(()=>e.style.display='none',2600); };
+  const esc = (s)=> (s==null?'':String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const fmt=(d)=> d?new Date(d).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
+  let eu=null, perfil=null, tab='just';
+
+  (async function init(){
+    const { data:{ user } } = await db.auth.getUser();
+    if(!user) return location.href='login.html';
+    eu=user;
+    const { data } = await db.from('profiles').select('*').eq('id',user.id).single();
+    if(!data || data.role!=='gestao') return location.href='login.html';
+    perfil=data;
+    $('nomeTopo').textContent = perfil.nome_completo || 'Gestão';
+    await carregarStats();
+    await render();
+  })();
+
+  $('sair').onclick = async ()=>{ await db.auth.signOut(); location.href='login.html'; };
+
+  document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active'); tab = t.dataset.tab; render();
+  });
+
+  async function carregarStats(){
+    const [a,p,g,j,pend,av] = await Promise.all([
+      db.from('profiles').select('id',{count:'exact',head:true}).eq('role','aluno'),
+      db.from('profiles').select('id',{count:'exact',head:true}).eq('role','professor'),
+      db.from('profiles').select('id',{count:'exact',head:true}).eq('role','gestao'),
+      db.from('justificativas').select('id',{count:'exact',head:true}),
+      db.from('justificativas').select('id',{count:'exact',head:true}).eq('status','pendente'),
+      db.from('avisos').select('id',{count:'exact',head:true})
+    ]);
+    $('stats').innerHTML = `
+      <div class="stat"><span class="ic">🧑‍🎓</span><div class="n">${a.count||0}</div><div class="l">Alunos</div></div>
+      <div class="stat"><span class="ic">👩‍🏫</span><div class="n">${p.count||0}</div><div class="l">Professores</div></div>
+      <div class="stat"><span class="ic">🏫</span><div class="n">${g.count||0}</div><div class="l">Gestão</div></div>
+      <div class="stat"><span class="ic">📋</span><div class="n">${j.count||0}</div><div class="l">Justificativas</div></div>
+      <div class="stat"><span class="ic">⏳</span><div class="n">${pend.count||0}</div><div class="l">Pendentes</div></div>
+      <div class="stat"><span class="ic">📣</span><div class="n">${av.count||0}</div><div class="l">Avisos</div></div>`;
+  }
+
+  async function render(){
+    const box = $('painelConteudo');
+    box.innerHTML = '<p class="empty">Carregando...</p>';
+    if(tab==='just') await renderJustificativas(box);
+    else if(tab==='usuarios') await renderUsuarios(box);
+    else await renderAvisos(box);
+  }
+
+  async function renderJustificativas(box){
+    const { data } = await db.from('justificativas').select('*').order('created_at',{ascending:false}).limit(60);
+    if(!data || !data.length){ box.innerHTML='<p class="empty">Nenhuma justificativa registrada.</p>'; return; }
+    box.innerHTML = `<div style="overflow-x:auto"><table><thead><tr>
+      <th>Aluno</th><th>Tipo</th><th>Data</th><th>Aula</th><th>Motivo</th><th>Anexo</th><th>Situação</th><th></th></tr></thead>
+      <tbody>${data.map(j=>`<tr>
+        <td>${esc(j.aluno_nome||'—')}</td>
+        <td><span class="pill ${j.tipo}">${j.tipo}</span></td>
+        <td>${j.data_ocorrencia||'—'}</td><td>${esc(j.aula||'—')}</td>
+        <td style="max-width:220px">${esc((j.motivo||'').slice(0,80))}</td>
+        <td>${j.atestado_url?`<a href="${j.atestado_url}" target="_blank">abrir</a>`:'—'}</td>
+        <td><span class="pill ${j.status}">${j.status}</span></td>
+        <td><button class="btn sm light" data-ap="${j.id}" data-st="aprovado">✓</button>
+            <button class="btn sm light" data-ap="${j.id}" data-st="recusado">✕</button></td>
+      </tr>`).join('')}</tbody></table></div>`;
+    box.querySelectorAll('[data-ap]').forEach(b => b.onclick = async () => {
+      const { error } = await db.from('justificativas').update({ status:b.dataset.st }).eq('id', b.dataset.ap);
+      if(error) return toast(error.message);
+      toast('Atualizado: '+b.dataset.st); carregarStats(); render();
+    });
+  }
+
+  async function renderUsuarios(box){
+    const { data } = await db.from('profiles').select('*').order('created_at',{ascending:false}).limit(100);
+    if(!data || !data.length){ box.innerHTML='<p class="empty">Nenhum usuário.</p>'; return; }
+    box.innerHTML = `<div style="overflow-x:auto"><table><thead><tr>
+      <th>Nome</th><th>Username</th><th>Perfil</th><th>Turma/Série</th><th>Turno</th><th>Status</th><th></th></tr></thead>
+      <tbody>${data.map(u=>`<tr>
+        <td>${esc(u.nome_completo)}</td><td>@${esc(u.username||'—')}</td>
+        <td><span class="pill ${u.role}">${u.role}</span></td>
+        <td>${esc(u.serie||'')} ${esc(u.turma||'')} ${(u.turmas||[]).map(esc).join(',')}</td>
+        <td>${esc(u.turno||'—')}</td>
+        <td>${u.status||'ativo'}</td>
+        <td><select data-role="${u.id}">
+          <option value="aluno" ${u.role==='aluno'?'selected':''}>aluno</option>
+          <option value="professor" ${u.role==='professor'?'selected':''}>professor</option>
+          <option value="gestao" ${u.role==='gestao'?'selected':''}>gestao</option></select>
+          <button class="btn sm light" data-del="${u.id}">Excluir</button></td>
+      </tr>`).join('')}</tbody></table></div>`;
+    box.querySelectorAll('[data-role]').forEach(s => s.onchange = async () => {
+      const { error } = await db.from('profiles').update({ role:s.value }).eq('id', s.dataset.role);
+      toast(error?error.message:'Perfil atualizado'); carregarStats();
+    });
+    box.querySelectorAll('[data-del]').forEach(b => b.onclick = async () => {
+      if(!confirm('Excluir este perfil? Esta ação remove o usuário da plataforma.')) return;
+      const { error } = await db.from('profiles').delete().eq('id', b.dataset.del);
+      toast(error?error.message:'Usuário excluído'); carregarStats(); render();
+    });
+  }
+
+  async function renderAvisos(box){
+    const { data } = await db.from('avisos').select('*').order('created_at',{ascending:false}).limit(60);
+    if(!data || !data.length){ box.innerHTML='<p class="empty">Nenhum aviso publicado.</p>'; return; }
+    box.innerHTML = `<div style="overflow-x:auto"><table><thead><tr>
+      <th>Título</th><th>Assunto</th><th>Destino</th><th>Turma</th><th>Turno</th><th>Autor</th><th>Data</th><th></th></tr></thead>
+      <tbody>${data.map(a=>`<tr>
+        <td>${esc(a.titulo)}</td><td>${esc((a.assunto||'').slice(0,60))}</td>
+        <td>${esc(a.destinatario_role||'todos')}</td><td>${esc(a.turma||'—')}</td><td>${esc(a.turno||'—')}</td>
+        <td>${esc(a.autor_nome||'—')}</td><td>${fmt(a.created_at)}</td>
+        <td><button class="btn sm light" data-delav="${a.id}">Excluir</button></td>
+      </tr>`).join('')}</tbody></table></div>`;
+    box.querySelectorAll('[data-delav]').forEach(b => b.onclick = async () => {
+      const { error } = await db.from('avisos').delete().eq('id', b.dataset.delav);
+      toast(error?error.message:'Aviso excluído'); render();
+    });
+  }
+</script>
+</body>
+</html>
